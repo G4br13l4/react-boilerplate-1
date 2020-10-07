@@ -1,4 +1,9 @@
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+import { incrementCount, decrementCount } from '../redux/actions/commonActions';
+
 
 class App extends Component {
 
@@ -8,11 +13,13 @@ class App extends Component {
             done: true
         }
     }
+  
+    incrementCount = () => {
+        this.props.incrementCount();
+    }
 
-    handleClick = () => {
-        const task = this.state.task;
-        task.done = !task.done;
-        this.setState({task});
+    decrementCount = () => {
+        this.props.decrementCount();
     }
 
     render() {
@@ -20,10 +27,27 @@ class App extends Component {
             <div>
                 <h3>{this.state.task.title}</h3>
                 <h1>{this.state.task.done.toString()}</h1>
-                <button onClick={this.handleClick}>click</button>
+                <p>{this.props.count}</p>
+                <button onClick={this.incrementCount}>+</button>
+                <button onClick={this.decrementCount}>-</button>
             </div>
         )
     }
 }
 
-export default App;
+function mapStateToProps(state) {
+    const count = state.common.count
+    return {
+        count
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        incrementCount: bindActionCreators(incrementCount, dispatch),
+        decrementCount: bindActionCreators(decrementCount, dispatch)
+    }
+}
+
+const connectedStateAndProps = connect(mapStateToProps, mapDispatchToProps);
+export default connectedStateAndProps(App);
